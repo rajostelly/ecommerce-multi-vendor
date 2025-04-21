@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { CategoryDropdown } from "./category-dropdown";
 import { CustomCategory } from "../types";
 import { Button } from "@/components/ui/button";
-import CategoriesSidebar from "./categories-sidebar";
+import { CategoriesSidebar } from "./categories-sidebar";
 
 type Props = {
   data: CustomCategory[];
