@@ -1,8 +1,12 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { ListFilterIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 import { CategoryDropdown } from "./category-dropdown";
 import { CustomCategory } from "../types";
+import { Button } from "@/components/ui/button";
+import CategoriesSidebar from "./categories-sidebar";
 
 type Props = {
   data: CustomCategory[];
@@ -54,6 +58,13 @@ const Categories = ({ data }: Props) => {
 
   return (
     <div className="relative w-full ">
+      {/* Categories sidebar */}
+      <CategoriesSidebar
+        open={isSidebarOpen}
+        onOpenChange={setIsSidebarOpen}
+        data={data}
+      />
+
       {/* Hidden to measure all items */}
       <div
         ref={measureRef}
@@ -72,16 +83,36 @@ const Categories = ({ data }: Props) => {
       </div>
 
       {/* Visible items */}
-      <div className="flex flex-nowrap items-center">
-        {data.map((category) => (
+      <div
+        className="flex flex-nowrap items-center"
+        ref={containerRef}
+        onMouseEnter={() => setIsAnyHovered(true)}
+        onMouseLeave={() => setIsAnyHovered(false)}
+      >
+        {data.slice(0, visibleCount).map((category) => (
           <div key={category.id}>
             <CategoryDropdown
               category={category}
               isActive={activeCategory === category.slug}
-              isNavigationHovered={false}
+              isNavigationHovered={isAnyHovered}
             />
           </div>
         ))}
+
+        <div ref={viewAllRef} className="shrink-0 ">
+          <Button
+            className={cn(
+              "h-11 px-4 bg-transparent border-transparent rounded-full hover:bg-white hover:border-primary text-black",
+              isActiveCategoryHidden &&
+                !isAnyHovered &&
+                "bg-white border-primary"
+            )}
+            onClick={() => setIsSidebarOpen(true)}
+          >
+            View All
+            <ListFilterIcon className="ml-2" />
+          </Button>
+        </div>
       </div>
     </div>
   );
