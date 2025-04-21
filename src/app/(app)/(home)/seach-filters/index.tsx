@@ -1,9 +1,10 @@
 import React from "react";
 import { SearchInput } from "./search-input";
 import Categories from "./categories";
+import { CustomCategory } from "../types";
 
 type Props = {
-  data: any;
+  data: CustomCategory[];
 };
 
 const SearchFilters = ({ data }: Props) => {
