@@ -13,6 +13,8 @@ type Props = {
 };
 
 const Categories = ({ data }: Props) => {
+  console.log("data Categories", data);
+
   const containerRef = useRef<HTMLDivElement>(null);
   const measureRef = useRef<HTMLDivElement>(null);
   const viewAllRef = useRef<HTMLDivElement>(null);

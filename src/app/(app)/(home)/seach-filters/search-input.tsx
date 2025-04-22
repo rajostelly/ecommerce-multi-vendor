@@ -13,7 +13,7 @@ type SearchInputProps = {
   data: CustomCategory[];
 };
 
-export const SearchInput = ({ disabled, data }: SearchInputProps) => {
+export const SearchInput = ({ disabled, data = [] }: SearchInputProps) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   return (
     <div className="flex items-center gap-2 w-full">
