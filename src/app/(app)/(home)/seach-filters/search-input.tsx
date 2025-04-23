@@ -5,23 +5,22 @@ import { ListFilterIcon, SearchIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 import { Input } from "@/components/ui/input";
-import { CustomCategory } from "../types";
 import { CategoriesSidebar } from "./categories-sidebar";
+import { useTRPC } from "@/trpc/client";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
 type SearchInputProps = {
   disabled?: boolean;
-  data: CustomCategory[];
 };
 
-export const SearchInput = ({ disabled, data = [] }: SearchInputProps) => {
+export const SearchInput = ({ disabled }: SearchInputProps) => {
+  const trpc = useTRPC();
+  const { data } = useSuspenseQuery(trpc.categories.getMany.queryOptions());
+
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   return (
     <div className="flex items-center gap-2 w-full">
-      <CategoriesSidebar
-        open={isSidebarOpen}
-        onOpenChange={setIsSidebarOpen}
-        data={data}
-      />
+      <CategoriesSidebar open={isSidebarOpen} onOpenChange={setIsSidebarOpen} />
       <div className="relative w-full">
         <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-neutral-500" />
         <Input
