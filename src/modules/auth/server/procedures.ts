@@ -1,9 +1,9 @@
-import { headers as getHeaders, cookies as getCookies } from "next/headers";
+import { headers as getHeaders } from "next/headers";
 import { TRPCError } from "@trpc/server";
 
 import { baseProcedure, createTRPCRouter } from "@/trpc/init";
-import { AUTH_COOKIE } from "../constants";
 import { loginSchema, registerSchema } from "../schemas";
+import { generateAuthCookie } from "../utils";
 
 export const authRouter = createTRPCRouter({
   session: baseProcedure.query(async ({ ctx }) => {
@@ -12,10 +12,10 @@ export const authRouter = createTRPCRouter({
     return session;
   }),
 
-  logout: baseProcedure.mutation(async () => {
-    const cookies = await getCookies();
-    cookies.delete(AUTH_COOKIE);
-  }),
+  // logout: baseProcedure.mutation(async () => {
+  //   const cookies = await getCookies();
+  //   cookies.delete(AUTH_COOKIE);
+  // }),
 
   register: baseProcedure
     .input(registerSchema)
@@ -61,16 +61,9 @@ export const authRouter = createTRPCRouter({
           message: "Failed to log in",
         });
 
-      const cookies = await getCookies();
-      cookies.set({
-        name: AUTH_COOKIE,
+      await generateAuthCookie({
+        prefix: ctx.db.config.cookiePrefix,
         value: data.token,
-        httpOnly: true,
-        path: "/",
-        // TODO: Ensure cross-domain cookies sharing is set up correctly
-        // sameSite: "none",
-        // domain: process.env.NEXT_PUBLIC_DOMAIN,
-        // secure: process.env.NODE_ENV === "production",
       });
     }),
 
@@ -89,16 +82,9 @@ export const authRouter = createTRPCRouter({
         message: "Failed to log in",
       });
 
-    const cookies = await getCookies();
-    cookies.set({
-      name: AUTH_COOKIE,
+    await generateAuthCookie({
+      prefix: ctx.db.config.cookiePrefix,
       value: data.token,
-      httpOnly: true,
-      path: "/",
-      // TODO: Ensure cross-domain cookies sharing is set up correctly
-      // sameSite: "none",
-      // domain: process.env.NEXT_PUBLIC_DOMAIN,
-      // secure: process.env.NODE_ENV === "production",
     });
 
     return data;

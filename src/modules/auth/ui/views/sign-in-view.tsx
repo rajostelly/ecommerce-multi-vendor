@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Poppins } from "next/font/google";
 import Link from "next/link";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Form,
   FormControl,
@@ -30,6 +30,9 @@ const poppins = Poppins({
 });
 
 export const SignInView = () => {
+  // Need to validate the token to have fresh session
+  const queryClient = useQueryClient();
+
   const trpc = useTRPC();
   const router = useRouter();
 
@@ -38,7 +41,8 @@ export const SignInView = () => {
       onError: (error) => {
         toast.error(error.message);
       },
-      onSuccess: () => {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries(trpc.auth.session.queryFilter());
         router.push("/");
       },
     })
